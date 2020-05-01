@@ -1,23 +1,19 @@
-image: docker:latest
+image: docker:stable
 
-services:
-  - docker:dind
+stages:
+  - Build image
+  - Push to Docker Hub
 
-before_script:
-  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-
-build-master:
-  stage: build
+docker build:
+  stage: Build image
   script:
-    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
-    - docker push "$CI_REGISTRY_IMAGE"
+  - docker info
+  - docker build -t ovh_exporter .
+
+docker push:
+  stage: Push to Docker Hub
   only:
-    - master
-
-build:
-  stage: build
+  - master
   script:
-    - docker build --pull -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" .
-    - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
-  except:
-    - master
+  - echo "$REGISTRY_PASSWORD" | docker login -u "$REGISTRY_USER" --password-stdin
+  - docker push leberrem/ovh_exporter
