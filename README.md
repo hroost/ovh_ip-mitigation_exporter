@@ -10,6 +10,14 @@ Docker image to export metrics from OVH API to prometheus
 - application_secret : OVH API application secret
 - consumer_key : OVH API consumer key
 
+**Docker hub**
+
+https://hub.docker.com/repository/docker/leberrem/ovh_exporter/
+
+**metrics**
+
+ovh_spam_blocked_ip : Count Blocked IPs due to spam
+
 **docker compose sample**
 
 ```yml
