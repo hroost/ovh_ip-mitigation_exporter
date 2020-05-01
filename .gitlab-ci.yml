@@ -7,16 +7,20 @@ stages:
   - Build image
   - Push to Docker Hub
 
-docker build:
-  stage: Build image
+build:
+  stage: build
+  except:
+    - master
   script:
-  - docker info
-  - docker build -t leberrem/ovh_exporter .
+    - docker info
+    - docker build -t leberrem/ovh_exporter .
 
-docker push:
-  stage: Push to Docker Hub
+build-master:
+  stage: build
   only:
-  - master
+    - master
   script:
-  - echo "$REGISTRY_PASSWORD" | docker login -u "$REGISTRY_USER" --password-stdin
-  - docker push leberrem/ovh_exporter
+    - docker info
+    - docker build -t leberrem/ovh_exporter .
+    - echo "$REGISTRY_PASSWORD" | docker login -u "$REGISTRY_USER" --password-stdin
+    - docker push leberrem/ovh_exporter
