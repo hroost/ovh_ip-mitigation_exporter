@@ -11,12 +11,12 @@ docker build:
   stage: Build image
   script:
   - docker info
-  - docker build -t ovh_exporter .
+  - docker build -t leberrem/ovh_exporter .
 
 docker push:
   stage: Push to Docker Hub
   only:
   - master
   script:
-  - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASSWORD"
+  - echo "$REGISTRY_PASSWORD" | docker login -u "$REGISTRY_USER" --password-stdin
   - docker push leberrem/ovh_exporter
