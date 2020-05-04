@@ -47,7 +47,7 @@ def getBlockedIPs():
         if spamip:
           # Get spam ip information
           spamipinfo = client.get('/ip/' + ip.split('/', 1)[0] + '/spam/' + spamip[0])
-          if spamipinfo['state'] == "blocked":
+          if spamipinfo['state'] == "blockedForSpam":
             countBlocked = countBlocked + 1
       except ovh.exceptions.ResourceNotFoundError:
         continue
