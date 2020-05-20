@@ -5,4 +5,6 @@ RUN pip install ovh && \
 
 ADD exporter.py /
 
+EXPOSE 9298
+
 CMD [ "python", "-u", "./exporter.py" ]
