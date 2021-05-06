@@ -14,10 +14,6 @@ Docker image to export metrics from OVH API to prometheus
 
 https://hub.docker.com/repository/docker/leberrem/ovh_exporter/
 
-**metrics**
-
-ovh_spam_blocked_ip : Count Blocked IPs due to spam
-
 **docker compose sample**
 
 ```yml
@@ -35,3 +31,7 @@ services:
       - APPLICATION_SECRET=xxxxxxxxxxxxxxxxxxxxxx
       - CONSUMER_KEY=xxxxxxxxxxxxxxxxxxxxxx
 ```
+
+**dashboard grafana sample**
+
+![dashboard](dashboard.png)
