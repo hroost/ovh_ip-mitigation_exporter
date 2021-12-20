@@ -28,16 +28,24 @@ def isgoodipv4(ipString):
 # -------------------------------------------------------
 # Count mitigation IPs
 # -------------------------------------------------------
-def getIPsOnMitigation():
+def getAccountName():
+  sys.stdout.write("Getting account name...\n")
+  try:
+    return client.get('/me')['nichandle']
+
+  except Exception as e:
+    sys.stderr.write('error:'+str(e))
+    exit(1)
+
+# -------------------------------------------------------
+# Count mitigation IPs
+# -------------------------------------------------------
+def getIPsOnMitigation(accountName):
   sys.stdout.write("Searching IPs on mitigation...\n")
 
   countOnMitigation = 0
 
   try:
-
-    # Get account information
-    account = client.get('/me')
-
     # Get all IPs
     ips = client.get('/ip')
 
@@ -53,18 +61,19 @@ def getIPsOnMitigation():
             countOnMitigation = countOnMitigation + 1
 
             if not '/32' in ipaddr:
-              GaugeIpOnMitigation.labels(account['nichandle'], ipaddr, ipnet).set(1)
+              GaugeIpOnMitigation.labels(accountName, ipaddr, ipnet).set(1)
             else:
-              GaugeIpOnMitigation.labels(account['nichandle'], ipaddr).set(1)
+              GaugeIpOnMitigation.labels(accountName, ipaddr).set(1)
 
         except ovh.exceptions.ResourceNotFoundError:
           continue
 
     sys.stdout.write(str(countOnMitigation) + " IPs on mitigation found\n")
-    GaugeIpCountOnMitigation.labels(account['nichandle']).set(countOnMitigation)
+    GaugeIpCountOnMitigation.labels(accountName).set(countOnMitigation)
 
   except Exception as e:
     sys.stderr.write('error:'+str(e))
+    exit(1)
 
 # -------------------------------------------------------
 # MAIN
@@ -74,9 +83,10 @@ def main():
   # Start up the server to expose the metrics.
   start_http_server(port)
 
+  accountName = getAccountName()
   # Generate some requests.
   while True:
-      getIPsOnMitigation()
+      getIPsOnMitigation(accountName)
       time.sleep(interval)
 
 # -------------------------------------------------------
