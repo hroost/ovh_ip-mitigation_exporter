@@ -52,7 +52,7 @@ def getIPsOnMitigation():
             sys.stdout.write('- IP:'+ipaddr+'\n')
             countOnMitigation = countOnMitigation + 1
 
-            if not '/32' in ip:
+            if not '/32' in ipaddr:
               GaugeIpOnMitigation.labels(account['nichandle'], ipaddr, ipnet).set(1)
             else:
               GaugeIpOnMitigation.labels(account['nichandle'], ipaddr).set(1)
