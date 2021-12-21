@@ -10,10 +10,6 @@ Docker image to export metrics from OVH API to prometheus
 - application_secret : OVH API application secret
 - consumer_key : OVH API consumer key
 
-**Docker hub**
-
-https://hub.docker.com/repository/docker/leberrem/ovh_exporter/
-
 **docker compose sample**
 
 ```yml
@@ -22,7 +18,7 @@ version: "2.1"
 services:
 
   ovh_exporter:
-    image: leberrem/ovh_exporter:latest
+    build: .
     container_name: ovh_exporter
     ports:
       - "9298:9298"
@@ -32,6 +28,17 @@ services:
       - CONSUMER_KEY=xxxxxxxxxxxxxxxxxxxxxx
 ```
 
-**dashboard grafana sample**
+## How to Use:
 
-![dashboard](dashboard.png)
+1. Generate OVH API tokens with their pages
+   - https://eu.api.ovh.com/createToken/ - for EU region
+   - https://ca.api.ovh.com/createToken/ - for CA region
+   - https://api.ovh.com/createToken/ - for US region
+
+You'll want to grant a GET request to the following OVH API URL: ```/me``` ```/ip``` ```/ip/*```.
+
+Further documentation on the ```/ip/{ipBlock}/mitigation/{ipAddr}``` API endpoint can be found on OVH's API
+documentation page here: https://api.ovh.com/console/#/ip/{ip}/mitigation/{ipOnMitigation}#GET
+
+2. Use the keys generated and configure them in docker-compose.yml
+3. docker-compose up

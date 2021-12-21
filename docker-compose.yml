@@ -1,0 +1,14 @@
+version: "2.1"
+
+services:
+
+  ovh_exporter:
+    build: .
+    container_name: ovh_exporter
+    ports:
+      - "9298:9298"
+    environment:
+      - APPLICATION_KEY=xxxxxxxxxxx
+      - APPLICATION_SECRET=xxxxxxxxxxxxxxxxxxxxxx
+      - CONSUMER_KEY=xxxxxxxxxxxxxxxxxxxxxx
+    # restart: always

@@ -1,8 +1,6 @@
-FROM python:3
+FROM python:3.9
 
 RUN pip install ovh && \
-    pip install pytz && \
-    pip install python-dateutil && \
     pip install prometheus_client
 
 ADD exporter.py /
