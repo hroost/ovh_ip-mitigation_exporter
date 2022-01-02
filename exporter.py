@@ -26,6 +26,13 @@ def isgoodipv4(ipString):
       return False
 
 # -------------------------------------------------------
+# Reset local cache
+# -------------------------------------------------------
+def resetCacheState(cache, accountName):
+  for ip in cache:
+    GaugeIpOnMitigation.labels(accountName, cache[ip]['ip'], cache[ip]['ipblock']).set(0)
+
+# -------------------------------------------------------
 # Count mitigation IPs
 # -------------------------------------------------------
 def getAccountName():
@@ -40,7 +47,7 @@ def getAccountName():
 # -------------------------------------------------------
 # Count mitigation IPs
 # -------------------------------------------------------
-def getIPsOnMitigation(accountName):
+def getIPsOnMitigation(accountName, cache):
   sys.stdout.write("Searching IPs on mitigation...\n")
 
   countOnMitigation = 0
@@ -48,6 +55,9 @@ def getIPsOnMitigation(accountName):
   try:
     # Get all IPs
     ips = client.get('/ip')
+
+    # Reset internal cache
+    resetCacheState(cache, accountName)
 
     for ipnet in ips:
         # filter IPV4
@@ -60,10 +70,8 @@ def getIPsOnMitigation(accountName):
             sys.stdout.write('- IP:'+ipaddr+'\n')
             countOnMitigation = countOnMitigation + 1
 
-            if not '/32' in ipaddr:
-              GaugeIpOnMitigation.labels(accountName, ipaddr, ipnet).set(1)
-            else:
-              GaugeIpOnMitigation.labels(accountName, ipaddr).set(1)
+            GaugeIpOnMitigation.labels(accountName, ipaddr, ipnet).set(1)
+            cache[ipaddr] = {"ip": ipaddr, "ipblock": ipnet}
 
         except ovh.exceptions.ResourceNotFoundError:
           continue
@@ -84,9 +92,10 @@ def main():
   start_http_server(port)
 
   accountName = getAccountName()
+  cache = {}
   # Generate some requests.
   while True:
-      getIPsOnMitigation(accountName)
+      getIPsOnMitigation(accountName, cache)
       time.sleep(interval)
 
 # -------------------------------------------------------
