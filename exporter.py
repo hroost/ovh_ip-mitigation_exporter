@@ -75,6 +75,8 @@ def getIPsOnMitigation(accountName, cache):
 
         except ovh.exceptions.ResourceNotFoundError:
           continue
+        except ovh.exceptions.ResourceExpiredError:
+          continue
 
     sys.stdout.write(str(countOnMitigation) + " IPs on mitigation found\n")
     GaugeIpCountOnMitigation.labels(accountName).set(countOnMitigation)
