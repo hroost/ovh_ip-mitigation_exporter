@@ -26,11 +26,10 @@ def isgoodipv4(ipString):
       return False
 
 # -------------------------------------------------------
-# Reset local cache
+# Reset metrics
 # -------------------------------------------------------
-def resetCacheState(cache, accountName):
-  for ip in cache:
-    GaugeIpOnMitigation.labels(accountName, cache[ip]['ip'], cache[ip]['ipblock']).set(0)
+def resetCacheState():
+  GaugeIpOnMitigation.clear()
 
 # -------------------------------------------------------
 # Count mitigation IPs
@@ -47,7 +46,7 @@ def getAccountName():
 # -------------------------------------------------------
 # Count mitigation IPs
 # -------------------------------------------------------
-def getIPsOnMitigation(accountName, cache):
+def getIPsOnMitigation(accountName):
   sys.stdout.write("Searching IPs on mitigation...\n")
 
   countOnMitigation = 0
@@ -56,8 +55,8 @@ def getIPsOnMitigation(accountName, cache):
     # Get all IPs
     ips = client.get('/ip')
 
-    # Reset internal cache
-    resetCacheState(cache, accountName)
+    # Reset metrics
+    resetCacheState()
 
     for ipnet in ips:
         # filter IPV4
@@ -71,7 +70,6 @@ def getIPsOnMitigation(accountName, cache):
             countOnMitigation = countOnMitigation + 1
 
             GaugeIpOnMitigation.labels(accountName, ipaddr, ipnet).set(1)
-            cache[ipaddr] = {"ip": ipaddr, "ipblock": ipnet}
 
         except ovh.exceptions.ResourceNotFoundError:
           continue
@@ -94,10 +92,10 @@ def main():
   start_http_server(port)
 
   accountName = getAccountName()
-  cache = {}
+
   # Generate some requests.
   while True:
-      getIPsOnMitigation(accountName, cache)
+      getIPsOnMitigation(accountName)
       time.sleep(interval)
 
 # -------------------------------------------------------
