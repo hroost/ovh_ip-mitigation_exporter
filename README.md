@@ -18,7 +18,7 @@ version: "2.1"
 services:
 
   ovh_exporter:
-    build: .
+    image: hroost/ovh_ip-mitigation_exporter:latest
     container_name: ovh_exporter
     ports:
       - "9298:9298"
