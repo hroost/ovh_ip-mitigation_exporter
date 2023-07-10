@@ -108,6 +108,8 @@ port = int(os.getenv('PORT', 9298))
 # Refresh interval between collects in seconds - default 60
 interval = int(os.getenv('INTERVAL', 60))
 
+endpoint_region = os.getenv('ENDPOINT_REGION', 'ovh-eu')
+
 application_key = os.getenv('APPLICATION_KEY', None)
 application_secret = os.getenv('APPLICATION_SECRET', None)
 consumer_key = os.getenv('CONSUMER_KEY', None)
@@ -133,7 +135,7 @@ sys.stdout.write('----------------------\n')
 
 # OVH credentials
 client = ovh.Client(
-    endpoint='ovh-eu',
+    endpoint=endpoint_region,
     application_key=application_key,
     application_secret=application_secret,
     consumer_key=consumer_key
