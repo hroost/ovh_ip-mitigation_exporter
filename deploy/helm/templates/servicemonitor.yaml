@@ -1,0 +1,15 @@
+{{- if .Values.serviceMonitor.create -}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "ovh-ipmitigation-exporter.fullname" . }}
+  labels:
+    {{- include "ovh-ipmitigation-exporter.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "ovh-ipmitigation-exporter.selectorLabels" . | nindent 6 }}
+  endpoints:
+    - port: {{ .Values.service.port }}
+      path: /metrics
+{{- end }}
